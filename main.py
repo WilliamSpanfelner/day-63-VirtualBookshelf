@@ -1,3 +1,4 @@
+import sqlalchemy.exc
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
@@ -6,8 +7,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///all_books.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-all_books = []
-
+# all_books = []
 
 class Books(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -21,6 +21,11 @@ class Books(db.Model):
 
 @app.route('/')
 def home():
+    try:
+        all_books = Books.query.all()
+    except sqlalchemy.exc.OperationalError:
+        db.create_all()
+        all_books = Books.query.all()
     return render_template('index.html', books=all_books)
 
 
