@@ -32,13 +32,24 @@ def home():
 @app.route("/add", methods=['GET', 'POST'])
 def add():
     if request.method == 'POST':
-        book = {
-            "title": request.form['title'],
-            "author": request.form['author'],
-            "rating": request.form['rating'],
-        }
-        all_books.append(book)
+        # book = {
+        #     "title": request.form['title'],
+        #     "author": request.form['author'],
+        #     "rating": request.form['rating'],
+        # }
+        # all_books.append(book)
+        next_index = len(Books.query.all()) + 1
+        book = Books(id=next_index,
+                     title=request.form['title'],
+                     author=request.form['author'],
+                     rating=float(request.form['rating']),
+                     )
+        db.session.add(book)
+        db.session.commit()
+
+        all_books = Books.query.all()
         print(all_books)
+
         return redirect(url_for("home"))
     return render_template('add.html')
 
