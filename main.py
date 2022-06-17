@@ -1,4 +1,3 @@
-import sqlalchemy.exc
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
@@ -6,6 +5,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///all_books.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
 
 # all_books = []
 
@@ -23,7 +23,7 @@ class Books(db.Model):
 def home():
     try:
         all_books = Books.query.all()
-    except sqlalchemy.exc.OperationalError:
+    except:
         db.create_all()
         all_books = Books.query.all()
     return render_template('index.html', books=all_books)
@@ -52,6 +52,27 @@ def add():
 
         return redirect(url_for("home"))
     return render_template('add.html')
+
+
+@app.route("/update/<book_id>", methods=['GET', 'POST'])
+def update(book_id):
+    if request.method == 'POST':
+        new_rating = request.form.get('new_rating')
+        book_to_update = Books.query.get(book_id)
+        book_to_update.rating = new_rating
+        db.session.commit()
+        return redirect(url_for("home"))
+    book_to_update = Books.query.get(book_id)
+    return render_template('edit_rating.html', book=book_to_update)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    username = request.form.get('username')
+    print(username)
+    password = request.form.get('password')
+    print(password)
+    return render_template('login.html')
 
 
 if __name__ == "__main__":
