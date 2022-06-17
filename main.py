@@ -54,14 +54,16 @@ def add():
     return render_template('add.html')
 
 
-@app.route("/update/<book_id>", methods=['GET', 'POST'])
-def update(book_id):
+@app.route("/update", methods=['GET', 'POST'])
+def update():
     if request.method == 'POST':
         new_rating = request.form.get('new_rating')
+        book_id = request.form.get('id')
         book_to_update = Books.query.get(book_id)
         book_to_update.rating = new_rating
         db.session.commit()
         return redirect(url_for("home"))
+    book_id = request.args.get('id')
     book_to_update = Books.query.get(book_id)
     return render_template('edit_rating.html', book=book_to_update)
 
