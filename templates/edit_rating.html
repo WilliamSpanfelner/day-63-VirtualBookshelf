@@ -5,9 +5,10 @@
     <title>Edit Rating</title>
 </head>
 <body>
-    <form action="{{ url_for('update', book_id=book.id) }}" method="POST">
-        <label>Book title: {{ book.title }}</label><br>
-        <label>Current rating: {{ book.rating }}</label><br>
+    <form action="{{ url_for('update') }}" method="POST">
+        <p>Book title: {{ book.title }}</p>
+        <p>Current rating: {{ book.rating }}</p>
+        <input hidden="hidden" name="id" value="{{ book.id }}">
         <input type="text" name="new_rating" placeholder="New Rating">
         <button type="submit">Change Rating</button>
     </form>
